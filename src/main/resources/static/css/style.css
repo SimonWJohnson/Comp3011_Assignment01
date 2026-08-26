@@ -1,0 +1,77 @@
+
+/* Universal selector styling */
+*{
+	box-sizing: border-box;
+}
+
+/* Whole page backgound & base font */
+body{
+	margin: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	background-color: #f4f6f8;
+	padding: 2rem;
+}
+
+/* Header / Introductory block styling */
+header{
+	background-color: #1f2937;
+	color: white;
+	padding: 2rem;
+}
+
+header h1{
+	margin: 0;
+}
+
+header p{
+	margin-bottom: 0;
+}
+
+/* Main container styling */
+main{
+	max-width: 900px; /* shrink to whatever suitable size, but no larger than 900px */
+	margin: 2rem auto; /* centre the element horizontally */
+}
+
+/* Group panel sizing */
+.panel{
+	background-color: white;
+	padding: 1.5rem;
+	margin-bottom: 1.5rem;
+	border-radius: 8px;
+}
+
+/* Button group styling */
+.control-button{
+	padding: 0.75rem 1.25rem; /* UX: increase click target */
+	border: none;
+	border-radius: 6px;
+	font-size: 1rem;
+	font-weight: bold; /* UX: improve readability */
+	cursor: pointer; /* UX: change to hand cursor on hover over active control */
+}
+
+#start-recording{
+	background-color: #16a34a; /* UX: universal color recognition */
+	color: white;
+}
+
+#stop-recording{
+	background-color: #dc2626; /* UX: universal color recognition */
+	color: white;
+}
+
+/* css specificity rule in effect; make disabled selector specific to each uniquely identified button */
+/*.control-button:disabled{*/
+#start-recording:disabled, #stop-recording:disabled{
+	background-color: #d1d5db;
+	color: #6b7280;
+	cursor: not-allowed; /* UX: indicates requested action will not be carried out */
+}
+
+/* Adjacent sibling selector */
+.control-button + .control-button{
+	margin-left: 0.5rem; /* UX: small gap between buttons */
+}
+
+
