@@ -13,7 +13,34 @@
 	</head>
 	<!--heading, recording controls status indicator, transcription-->
 	<body>
-		<h1>Speech to Text</h1>
+		<!--introductory content-->
+		<header>
+			<h1>Speech to Text</h1>
+			<p>Record audio and convert it to text using a cloud transcription service.</p>
+		</header>
+		<!--container for primary application content-->
+		<main>
+			<!--group related content into meaningful regions-->
+			<!--recording interface-->
+			<section>
+				<h2>Recorder</h2>
+				
+				<p>Status: Ready</p>
+				
+				<!--buttons-->
+				<button type="button">Start Recording</button> <!--should be disabled when recording begins-->
+				<button type="button">Stop Recording</button> <!--should be disabled when in ready state-->
+			</section>
+			
+			<!--Transcription interface-->
+			<section>
+				<h2>Transcription</h2>
+				
+				<p>Your transcription will appear here.</p>
+			</section>
+		</main>
+		
+		
 		<script src="js/app.js"></script>
 	</body>
 </html>
