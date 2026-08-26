@@ -22,21 +22,25 @@
 		<main>
 			<!--group related content into meaningful regions-->
 			<!--recording interface-->
-			<section>
+			<section class="panel">
 				<h2>Recorder</h2>
 				
-				<p>Status: Ready</p>
+				<p id="recording-status">Status: Ready</p>
 				
 				<!--buttons-->
-				<button type="button">Start Recording</button> <!--should be disabled when recording begins-->
-				<button type="button">Stop Recording</button> <!--should be disabled when in ready state-->
+				<button type="button" class="control-button" id="start-recording"><!--should be disabled when recording begins-->
+					Start Recording
+				</button> 
+				<button type="button" class="control-button" id="stop-recording" disabled><!--should be disabled when in ready state-->
+					Stop Recording
+				</button> 
 			</section>
 			
 			<!--Transcription interface-->
-			<section>
+			<section class="panel">
 				<h2>Transcription</h2>
 				
-				<p>Your transcription will appear here.</p>
+				<p id="transcription-output">Your transcription will appear here.</p>
 			</section>
 		</main>
 		
