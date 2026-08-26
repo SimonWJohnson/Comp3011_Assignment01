@@ -79,3 +79,20 @@ main{
 	opacity: 0.85; /* UX: Visual feedback to user when using recording controls */
 }
 
+/* ## Recording status indicator ## */
+#status-indicator{
+	display: inline-block;
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 50%;
+	background-color: #16a34a;
+	margin-right: 0.4rem;
+}
+
+#status-indicator.recording{
+	background-color: #dc2626;
+}
+
+
+
+

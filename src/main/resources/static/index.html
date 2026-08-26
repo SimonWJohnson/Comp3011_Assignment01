@@ -25,7 +25,11 @@
 			<section class="panel">
 				<h2>Recorder</h2>
 				
-				<p id="recording-status">Status: Ready</p>
+				<p id="recording-status">
+					<span id="status-indicator"></span> <!--Coloured dot indicator-->
+					Status: 
+					<span id="status-text">Ready</span> <!--Changing text-->
+				</p>
 				
 				<!--buttons-->
 				<button type="button" class="control-button" id="start-recording"><!--should be disabled when recording begins-->
