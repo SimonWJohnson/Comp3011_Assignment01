@@ -74,4 +74,8 @@ main{
 	margin-left: 0.5rem; /* UX: small gap between buttons */
 }
 
+/* Hover feedback for active controls */
+.control-button:not(:disabled):hover{
+	opacity: 0.85; /* UX: Visual feedback to user when using recording controls */
+}
 
