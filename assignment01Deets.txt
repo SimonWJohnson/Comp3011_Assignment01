@@ -1,4 +1,8 @@
 Comp3001_Assignment01
 
+# Git location
 https://github.com/SimonWJohnson/Comp3001_Assignment01.git
+
+# Local host web address
+http://localhost:8080/
 
