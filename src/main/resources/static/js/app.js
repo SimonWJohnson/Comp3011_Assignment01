@@ -10,15 +10,33 @@ const statusText = document.getElementById("status-text");
 let mediaStream = null;
 
 // Audio data
-let mediaRecorder = nul;
+let mediaRecorder = null;
 let audioChunks = [];
 
 // ## Event listeners, add/remove a state classification from this element ##
 
 // Start recording
 startButton.addEventListener("click", async function(){ 
+	// Permit application to use live mic audio stream
 	// requesting microphone access is asynchronous - the browser may need to permission-prompt the user and wait for a response
 	mediaStream = await navigator.mediaDevices.getUserMedia({audio: true});
+	// Tie a recorder object to the live mic stream
+	mediaRecorder = new MediaRecorder(mediaStream);
+	// reset the the audio chunk array for a fresh recording
+	// each new recording begins with an empty collection of audio chunks
+	audioChunks = [];
+	
+	// MediaRecorder generates recorded audio data through 'dataavailable" events
+	// Store each piece of audio in the array so it can be combined into a single audio Blob when recording stops
+	mediaRecorder.addEventListener("dataavailable", function(event){
+		audioChunks.push(event.data);
+	});
+	
+	// Start capturing audio from the microphone
+	mediaRecorder.start();
+	
+	// Debug / Diagnostic tool
+	//console.log("MediaRecorder state: ", mediaRecorder.state );
 	
 	startButton.disabled = true;
 	stopButton.disabled = false;
