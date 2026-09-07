@@ -47,6 +47,26 @@ startButton.addEventListener("click", async function(){
 
 // Stop recording
 stopButton.addEventListener("click", function(){
+	
+	// finish the current recording, flush remaining audio data
+	mediaRecorder.stop();
+	
+	//  close the MediaStream to deactivate the mic
+	mediaStream .getTracks().forEach(function(track){track.stop();}); 
+	
+	
+	// the final dataavaialble event can occur as part of stopping -
+	// create the Blob after the recorder has fully stopped
+	mediaRecorder.addEventListener("stop", function(){
+		
+		// take all spearate binary audio chunks and package them as one binary object
+		// this binary object is what gets uplpoaded to the Spring backend 
+		const audioBlob = new Blob(audioChunks, {type: mediaRecorder.mimeType});
+		
+		console.log("Audio Blob:", audioBlob);
+		console.log("Audio size:", audioBlob.size, "bytes");
+	});
+	
 	startButton.disabled = false;
 	stopButton.disabled = true;
 	//recordingStatus.textContent = "Status: Ready";
