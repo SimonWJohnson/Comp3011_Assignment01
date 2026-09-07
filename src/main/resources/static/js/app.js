@@ -57,7 +57,7 @@ stopButton.addEventListener("click", function(){
 	
 	// the final dataavaialble event can occur as part of stopping -
 	// create the Blob after the recorder has fully stopped
-	mediaRecorder.addEventListener("stop", function(){
+	mediaRecorder.addEventListener("stop", function(){ // **** move this into the Start handler at a later stage to avoid accumulating listeners- 
 		
 		// take all spearate binary audio chunks and package them as one binary object
 		// this binary object is what gets uplpoaded to the Spring backend 
