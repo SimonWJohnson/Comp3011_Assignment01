@@ -63,6 +63,8 @@ stopButton.addEventListener("click", function(){
 		// this binary object is what gets uplpoaded to the Spring backend 
 		const audioBlob = new Blob(audioChunks, {type: mediaRecorder.mimeType});
 		
+		// 
+		
 		console.log("Audio Blob:", audioBlob);
 		console.log("Audio size:", audioBlob.size, "bytes");
 	});
