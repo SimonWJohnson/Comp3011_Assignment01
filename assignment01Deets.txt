@@ -8,7 +8,7 @@ http://localhost:8080/
 
 # Endpoint 01 - http://localhost:8080/api/v1/admin/uptime
 # Endpoint 02 - http://localhost:8080/api/v1/global/stats
-# Endpoint 03 - 
+# Endpoint 03 - http://localhost:8080/api/v1/admin/shutdown
 # Endpoint 04 - 
 
 # Local location
