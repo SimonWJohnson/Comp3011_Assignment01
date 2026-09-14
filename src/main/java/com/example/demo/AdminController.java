@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.context.ConfigurableApplicationContext;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -19,6 +20,12 @@ public class AdminController {
 	
 	// Create context for shutdown POST request
 	private final ConfigurableApplicationContext context;
+	
+	// Constructor
+	// Enable the controller to access the Spring app context via dependency injection
+	public AdminController(ConfigurableApplicationContext context) {
+		this.context = context;
+	}
 	
 	// Handle GET requests to /api/v1/admin/uptime
 	@GetMapping("/uptime")
@@ -36,7 +43,7 @@ public class AdminController {
 		return new UptimeResponse(serverStart.toString(), now.toString(), uptimeSeconds);
 	}
 	
-	// Psuedocode
+	// Pseudocode
 	/*
 	 * POST /shutdown
 	 * Server accepts request
@@ -45,5 +52,40 @@ public class AdminController {
 	 * Spring app begins graceful shutdown
 	 * App exits
 	 * */
+	
+	// Handle POST requests to /api/v1/admin/shutdown
+	@PostMapping("/shutdown")
+	public ResponseEntity<ShutdownResponse> shutdownServer(){
+		// ResponseEntity = Entire HTTP response including status code
+		// ShutdownResponse = Body of HTTP response
+		
+		// Create the response before beginning shutdown process
+		ShutdownResponse response = new ShutdownResponse("Graceful shutdown requested.");
+		
+		// Begin shutdown shortly after the HTTP response is returned
+		// Create a separate thread to perform the shutdown
+		Thread shutdownThread = new Thread(() -> {
+			
+			try {
+				// Pause this shutdown thread for 500ms to give the current HTTP request time to return a response to the client
+				Thread.sleep(500);
+			}
+			catch(InterruptedException e) {
+				// If the shutdown thread is interrupted while sleeping, restore its interrupted status
+				Thread.currentThread().interrupt();
+			}
+			
+			// Close the Spring app context to begin the shutdown process
+			context.close();		
+		});
+		
+		// Start the shutdown thread
+		// Executed independently from the current HTTP request thread
+		shutdownThread.start();
+		
+		// Return HTTP status 202 Accepted
+		// Return ShutdownResponse object as JSON to acknowledge shutdown request
+		return ResponseEntity.accepted().body(response);
+	}
 	
 }
