@@ -12,6 +12,7 @@ public class ErrorResponse {
 	}
 	
 	// Getter
+	// Serialise the object into JSON
 	public String getError() {
 		return error;
 	}
