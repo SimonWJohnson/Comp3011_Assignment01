@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 // Handles communication between the Spring backend and the external speech-to-text Cloud service
@@ -31,5 +32,17 @@ public class TranscriptionService {
 					"OPENAI_API_KEY environment variable is not configured."
 					);
 		}
+	}
+	
+	// Receive the uploaded audio file from the AudioController
+	// The OpenAI transcription request will be implemented here
+	public String transcribe(MultipartFile audioFile) {
+		
+		// Temporary diagnostic message to confirm controller-to-service delegation
+		// DO NOT log the API key or audio contents
+		System.out.println("Audio received by TranscriptionService");
+		
+		return null;
+		
 	}
 }

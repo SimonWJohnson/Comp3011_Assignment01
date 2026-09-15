@@ -32,6 +32,9 @@ public class AudioController {
 		System.out.println("Content type: " + audioFile.getContentType());
 		System.out.println("Size: " + audioFile.getSize() + " bytes");
 		
+		// Delegate transcription responsibility to a transcription service
+		transcriptionService.transcribe(audioFile);
+		
 	}
 	
 }
