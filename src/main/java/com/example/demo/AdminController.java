@@ -11,6 +11,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @RestController
 @RequestMapping("/api/v1/admin")
 public class AdminController {
@@ -20,6 +22,11 @@ public class AdminController {
 	
 	// Create context for shutdown POST request
 	private final ConfigurableApplicationContext context;
+	
+	// Track whether a graceful shutdown has already been requested
+	// AtomicBoolean allows multiple request threads to safely check and update this value without creating a race condition
+	// Check whether AtomicBoolean is false - if it is, change it to true as one indivisible operation
+	private final AtomicBoolean shutdownRequested = new AtomicBoolean(false);
 	
 	// Constructor
 	// Enable the controller to access the Spring app context via dependency injection
