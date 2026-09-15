@@ -55,18 +55,41 @@ stopButton.addEventListener("click", function(){
 	mediaStream .getTracks().forEach(function(track){track.stop();}); 
 	
 	
-	// the final dataavaialble event can occur as part of stopping -
+	// the final dataavailable event can occur as part of stopping -
 	// create the Blob after the recorder has fully stopped
 	mediaRecorder.addEventListener("stop", function(){ // **** move this into the Start handler at a later stage to avoid accumulating listeners- 
 		
-		// take all spearate binary audio chunks and package them as one binary object
-		// this binary object is what gets uplpoaded to the Spring backend 
+		// take all separate binary audio chunks and package them as one binary object
+		// this binary object is what gets uploaded to the Spring backend 
 		const audioBlob = new Blob(audioChunks, {type: mediaRecorder.mimeType});
 		
 		// 
 		
 		console.log("Audio Blob:", audioBlob);
 		console.log("Audio size:", audioBlob.size, "bytes");
+		
+		// Create a FormData object to package the audio file for transmission in an HTTP multipart / formdata request
+		// Browser-side container for the multipart HTTP request
+		const formData = new FormData(); 
+		
+		// Add the recorded audio Blob to the multipart request
+		// 'audio' must match @RequestParam("audio") in the AudioController
+		formData.append("audio", audioBlob, "recording.webm");
+		// "audio" = multipart field name
+		// audioBlob = binary recording
+		// "recording.webm" = filename sent to Spring
+		// App.js -> HTTP -> AudioController.java
+		// @RequestParam("audio") = same field name
+		// MultipartFile audioFile = receives recording.webm
+		
+		// Send the recorded audio to the Spring backend
+		// When fetch() receives a FormData body, the browser generates the correct Content-Type and multipart boundary automatically
+		fetch("/api/v1/audio/transcribe", {
+			method: "POST",
+			body: formData
+		});
+		
+		
 	});
 	
 	startButton.disabled = false;
