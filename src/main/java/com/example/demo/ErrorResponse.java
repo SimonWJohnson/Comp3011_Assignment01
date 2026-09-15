@@ -28,22 +28,27 @@ public class ErrorResponse {
 	}
 	
 	// Getters
+	// UTC timestamp
 	public String getTimestamp() {
 		return timestamp;
 	}
-
+	
+	// HTTP status code
 	public int getStatus() {
 		return status;
 	}
 
+	// Standard HTTP error description
 	public String getError() {
 		return error;
 	}
 
+	// Human-readable error message
 	public String getMessage() {
 		return message;
 	}
 
+	// API path at which error occurred
 	public String getPath() {
 		return path;
 	}

@@ -62,9 +62,28 @@ public class AdminController {
 	
 	// Handle POST requests to /api/v1/admin/shutdown
 	@PostMapping("/shutdown")
-	public ResponseEntity<ShutdownResponse> shutdownServer(){
+	//public ResponseEntity<ShutdownResponse> shutdownServer(){
 		// ResponseEntity = Entire HTTP response including status code
 		// ShutdownResponse = Body of HTTP response
+	public ResponseEntity<?> shutdownServer(){
+		// ? wildcard allows the method to return two different body types:
+			// 202 ShutdownResponse
+			// 409 ErrorResponse
+		
+		// Atomically check whether shutdown has already been requested
+		// Change the value from false to true if this is the first request
+		if(!shutdownRequested.compareAndSet(false, true)) {
+			// compareAndSet returned false, meaning the value was already true
+			// A shutdownRequest is therefore already being processed
+			// Create and return the ErrorResponse as per API contract
+			return ResponseEntity.status(409).body(new ErrorResponse(
+					Instant.now().toString(),
+					409,
+					"Conflict",
+					"Graceful shutdown is already in progress.",
+					"/api/v1/admin/shutdown"
+					));
+		}
 		
 		// Create the response before beginning shutdown process
 		ShutdownResponse response = new ShutdownResponse("Graceful shutdown requested.");
