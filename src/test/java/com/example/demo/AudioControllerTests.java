@@ -25,8 +25,30 @@ import org.springframework.web.multipart.MultipartFile;
 @AutoConfigureMockMvc
 public class AudioControllerTests {
 
+	// MockMvc sends simulated HTTP requests through Spring MVC
+	@Autowired
+	private MockMvc mockMvc;
+	
+	// Replace the real TranscriptionService Bean with a Mockito mock for the duration of the test
+	@MockitoBean
+	private TranscriptionService transcriptionService;
+	
 	@Test
-	void contextLoads() {
+	void transcribeReturnsTextFromTranscriptionService() throws Exception{
 		
-	}
+		// Arrange - create a simulated audio file uploaded by the browser
+		MockMultipartFile audioFile = new MockMultipartFile(
+				"audio", "recording.webm", "audio/webm", "fake audio data".getBytes()
+				);
+		
+		// Configure the mocked service to return a known transcription whenever it recieves a MultipartFile
+		when(transcriptionService.transcribe(any(MultipartFile.class))).thenReturn("Test transcription");
+		
+		// Act and Assert - send the multipart request through Spring MVC
+		// and verify the controller returns the service result successfully
+		mockMvc.perform(multipart("/api/v1/audio/transcribe")
+				.file(audioFile))
+				.andExpect(status().isOk())
+				.andExpect(content().string("Test transcription"));
+	}		
 }
