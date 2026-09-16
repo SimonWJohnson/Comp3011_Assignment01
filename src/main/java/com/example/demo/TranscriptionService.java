@@ -33,7 +33,16 @@ public class TranscriptionService {
 	// HTTP client used by this service to send requests to the OpenAI API
 	private final RestClient restClient;
 	
-	public TranscriptionService() {
+	// Service used to store cumulative token usage
+	private final GlobalStatsService statsService;
+	
+	// Constructor
+	// Spring injects the shared GlobalStatsService instance when it creates the TranscriptionService
+	public TranscriptionService(GlobalStatsService statsService) {
+		
+		// Store the injected GlobalStatsService so other methods in this class can access the global token counters
+		// COmpleted transcription requests can update token totals
+		this.statsService = statsService;
 		
 		// Read the OpenAI API key dynamically from the operating system environment (runtime retrieval)
 		// The API key must NEVER be hard-coded, logged, returned to clients, or sent to the browser
