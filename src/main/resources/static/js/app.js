@@ -36,12 +36,8 @@ startButton.addEventListener("click", async function(){
 	// Start capturing audio from the microphone
 	mediaRecorder.start();
 	
-	// Debug / Diagnostic tool
-	//console.log("MediaRecorder state: ", mediaRecorder.state );
-	
 	startButton.disabled = true;
 	stopButton.disabled = false;
-	//recordingStatus.textContent = "Status: Recording...";
 	statusText.textContent = "Recording...";
 	statusIndicator.classList.add("recording");
 });
@@ -62,12 +58,7 @@ stopButton.addEventListener("click", function(){
 		
 		// take all separate binary audio chunks and package them as one binary object
 		// this binary object is what gets uploaded to the Spring backend 
-		const audioBlob = new Blob(audioChunks, {type: mediaRecorder.mimeType});
-		
-		// 
-		
-		console.log("Audio Blob:", audioBlob);
-		console.log("Audio size:", audioBlob.size, "bytes");
+		const audioBlob = new Blob(audioChunks, {type: mediaRecorder.mimeType});		
 		
 		// Create a FormData object to package the audio file for transmission in an HTTP multipart / formdata request
 		// Browser-side container for the multipart HTTP request
@@ -104,7 +95,6 @@ stopButton.addEventListener("click", function(){
 	
 	startButton.disabled = false;
 	stopButton.disabled = true;
-	//recordingStatus.textContent = "Status: Ready";
 	statusText.textContent = "Ready";
 	statusIndicator.classList.remove("recording"); 
 });
