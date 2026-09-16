@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 // Handle HTTP requests relating to recorded audio and speech transcription
+// Acts as a server when it receives the browser's request
 @RestController // discover the class as a REST controller
 @RequestMapping("/api/v1/audio") // establish the common base path
 public class AudioController {
