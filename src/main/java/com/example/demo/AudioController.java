@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 
 // Handle HTTP requests relating to recorded audio and speech transcription
 // Acts as a server when it receives the browser's request
@@ -25,7 +26,7 @@ public class AudioController {
 	// The browser cannot send Spring the JS Blob object directly - these bytes are sent as an HTTP multipart request
 	// Spring represents the uploaded file on the java side as a MultipartFile
 	@PostMapping("/transcribe")
-	public void receiveAudio(@RequestParam("audio") MultipartFile audioFile) {
+	public void receiveAudio(@RequestParam("audio") MultipartFile audioFile) throws IOException{
 		
 		/* Temp diagnostic tool to confirm that the uploaded audio file has reached the Spring backend successfully */
 		System.out.println("Audio file received");

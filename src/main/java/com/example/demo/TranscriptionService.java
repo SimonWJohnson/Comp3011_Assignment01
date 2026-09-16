@@ -3,7 +3,11 @@ package com.example.demo;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestClient;
-
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import java.io.IOException;
 
 // Handles communication between the Spring backend and the external speech-to-text Cloud service
 // AudioController delegates transcription to --> TranscriptionService communicates with --> OpenAI
@@ -14,14 +18,14 @@ import org.springframework.web.client.RestClient;
 public class TranscriptionService {
 
 	// Name the operating system environment variable containing the OpenAI key
-	// Stores the the environment variable NAME only, NOT the key itself
+	// Stores the environment variable NAME only, NOT the key itself
 	private static final String API_KEY_ENVIRONMENT_VARIABLE = "OPENAI_API_KEY";
 	
 	// OpenAI endpoint used to convert uploaded audio into text - where the request is sent
 	private static final String TRANSCRIPTION_API_URL = "https://api.openai.com/v1/audio/transcriptions";
 	
 	// Speech-to-text model used by the transcription request - what processes the audio
-	private static final String TRANSCRIPTION_MODEL = "gpt-40-mini-transcribe";
+	private static final String TRANSCRIPTION_MODEL = "gpt-4o-mini-transcribe";
 	
 	// API key read dynamically from the operating system environment at runtime
 	private final String apiKey;
@@ -52,11 +56,56 @@ public class TranscriptionService {
 	
 	// Receive the uploaded audio file from the AudioController
 	// The OpenAI transcription request will be implemented here
-	public String transcribe(MultipartFile audioFile) {
+	// IOException may occur while reading the uploaded audio file
+	// If this occurs, the exception propagates to the global exception handler
+	public String transcribe(MultipartFile audioFile) throws IOException {
+				
+		// Build the multipart/form-data body required by the OpenAI transcription API
+		// The outgoing request body is a multi-value map because a multipart form contains named parts
+		// The 'model' part contains the model name
+		// The 'file' part contains the audio resource
+		MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
 		
-		// Temporary diagnostic message to confirm controller-to-service delegation
-		// DO NOT log the API key or audio contents
-		System.out.println("Audio received by TranscriptionService");
+		// Tell OpenAI which STT model should process the recording
+		requestBody.add("model", TRANSCRIPTION_MODEL);
+		
+		// Convert the uploaded MultipartFile into a Resource that can be attached as the file part of the outgoing multipart HTTP request
+		ByteArrayResource audioResource = new ByteArrayResource(audioFile.getBytes()) {
+			
+			// Preserve the original filename and extension so OpenAI can identify the audio format, extension-bearing filename, and appropriate content type
+			@Override
+			public String getFilename() {
+				return audioFile.getOriginalFilename();
+			}
+		};
+		
+		// Add the recorded audio as the 'file' part of the multipart request
+		requestBody.add("file", audioResource);
+		
+		// Send the multipart transcription request to the OpenAI API
+		String response = restClient.post()
+				
+				// Outgoing HTTP request destination
+				.uri(TRANSCRIPTION_API_URL)
+				
+				// Authenticate server-side request using the API key
+				// Outgoing authentication header required by OpenAI, created only for the Spring to OpenAI request
+				// The key remains on the backend and is never exposed / sent to the browser
+				.headers(headers -> headers.setBearerAuth(apiKey))
+				
+				// Tell OpenAI that the request body contains multiple form-data parts
+				.contentType(MediaType.MULTIPART_FORM_DATA)
+				
+				// Supply the model and audio parts created above
+				// Creates the multipart body
+				.body(requestBody)
+				
+				// Execute the HTTP request and begin processing the HTTP response
+				.retrieve()
+				
+				// Temporarily receive the OpenAI JSON response as a String
+				// This will be replaced with a legitimate Java response DTO
+				.body(String.class);
 		
 		return null;
 		

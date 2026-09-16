@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 	// Handle unexpected exceptions that are not handled elsewhere
 	@ExceptionHandler(Exception.class) // handles anything derived from the general Exception class
 	public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception exception, HttpServletRequest request) {
-		
+				
 		// Create the standard error response required by API contract
 		ErrorResponse response = new ErrorResponse(
 				Instant.now().toString(), 500, "Internal Server Error", "An unexpected server error occurred.", request.getRequestURI()
