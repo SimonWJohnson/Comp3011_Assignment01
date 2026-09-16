@@ -27,9 +27,6 @@ public class TranscriptionService {
 	// Speech-to-text model used by the transcription request - what processes the audio
 	private static final String TRANSCRIPTION_MODEL = "gpt-4o-mini-transcribe";
 	
-	// API key read dynamically from the operating system environment at runtime
-	private final String apiKey;
-	
 	// HTTP client used by this service to send requests to the OpenAI API
 	private final RestClient restClient;
 	
@@ -41,26 +38,32 @@ public class TranscriptionService {
 	public TranscriptionService(GlobalStatsService statsService) {
 		
 		// Store the injected GlobalStatsService so other methods in this class can access the global token counters
-		// COmpleted transcription requests can update token totals
+		// Completed transcription requests can update token totals
 		this.statsService = statsService;
-		
-		// Read the OpenAI API key dynamically from the operating system environment (runtime retrieval)
-		// The API key must NEVER be hard-coded, logged, returned to clients, or sent to the browser
-		this.apiKey = System.getenv(API_KEY_ENVIRONMENT_VARIABLE);
-		
-		// Fail safely if the required environment variable is not available
-		// variable doesn't exist || variable exists but is empty
-		if(this.apiKey == null || this.apiKey.isBlank()) {
-			throw new IllegalStateException(
-					// Missing configuration is named, but the value is not exposed
-					"OPENAI_API_KEY environment variable is not configured."
-					);
-		}
 		
 		// Create the HTTP client used for outgoing requests to OpenAI
 		// RestClient is safe for use from multiple threads 
 		// So create the client once with the service and reuse it		
 		this.restClient = RestClient.create();
+	}
+	
+	// Retrieve the OpenAI API key when a transcription request requires it
+	// This allows the Spring application context to start without requiring
+	// the API key until the external OpenAI service is actually used
+	private String getApiKey() {
+		
+		// Read the API key dynamically from the operating system environment
+		String apiKey = System.getenv(API_KEY_ENVIRONMENT_VARIABLE);
+		
+		// Validate that the required environment variable exists and contains a value
+		if(apiKey == null || apiKey.isBlank()) {
+			
+			// Identify the missing configuration without exposing any secret value
+			throw new IllegalStateException("OPENAI_API_KEY environment variable is not configured.");
+		}
+		
+		// Return the key for server-side authentication with OpenAI
+		return apiKey;
 	}
 	
 	
@@ -102,7 +105,8 @@ public class TranscriptionService {
 				// Authenticate server-side request using the API key
 				// Outgoing authentication header required by OpenAI, created only for the Spring to OpenAI request
 				// The key remains on the backend and is never exposed / sent to the browser
-				.headers(headers -> headers.setBearerAuth(apiKey))
+				// Validate runtime configuration at the point where that configuration is actually required
+				.headers(headers -> headers.setBearerAuth(getApiKey()))
 				
 				// Tell OpenAI that the request body contains multiple form-data parts
 				.contentType(MediaType.MULTIPART_FORM_DATA)
@@ -114,12 +118,10 @@ public class TranscriptionService {
 				// Execute the HTTP request and begin processing the HTTP response
 				.retrieve()
 				
-				// Temporarily receive the OpenAI JSON response as a String
-				// This will be replaced with a legitimate Java response DTO
-				//.body(String.class);
+				// Convert the OpenAI JSON response into the Java response DTO
 				.body(OpenAiTranscriptionResponse.class);
 		
-		// Record the token usage returned by OpenAi
+		// Record the token usage returned by OpenAI
 		// These values are added to the cumulative totals for the lifetime of the current server process
 		// These fields belong to the Spring managed GlobalStatsService, and begin at zero when the application process restarts
 		statsService.addTokens(
@@ -128,7 +130,7 @@ public class TranscriptionService {
 				);
 		
 
-		// Return the transcription text extracted from the OpenAi response
+		// Return the transcription text extracted from the OpenAI response
 		return response.text();
 		
 	}
