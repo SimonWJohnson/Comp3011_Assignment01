@@ -63,6 +63,7 @@ public class TranscriptionService {
 		this.restClient = RestClient.create();
 	}
 	
+	
 	// Receive the uploaded audio file from the AudioController
 	// The OpenAI transcription request will be implemented here
 	// IOException may occur while reading the uploaded audio file
@@ -118,7 +119,15 @@ public class TranscriptionService {
 				//.body(String.class);
 				.body(OpenAiTranscriptionResponse.class);
 		
-		//return null;
+		// Record the token usage returned by OpenAi
+		// These values are added to the cumulative totals for the lifetime of the current server process
+		// These fields belong to the Spring managed GlobalStatsService, and begin at zero when the application process restarts
+		statsService.addTokens(
+				response.usage().inputTokens(),
+				response.usage().outputTokens()
+				);
+		
+
 		// Return the transcription text extracted from the OpenAi response
 		return response.text();
 		
