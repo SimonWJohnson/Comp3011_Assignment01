@@ -5,6 +5,7 @@ const stopButton = document.getElementById("stop-recording");
 const recordingStatus = document.getElementById("recording-status");
 const statusIndicator = document.getElementById("status-indicator");
 const statusText = document.getElementById("status-text");
+const transcriptionOutput = document.getElementById("transcription-output");
 
 // Microphone access
 let mediaStream = null;
@@ -87,8 +88,17 @@ stopButton.addEventListener("click", function(){
 		fetch("/api/v1/audio/transcribe", {
 			method: "POST",
 			body: formData
-		});
-		
+		})
+		.then(function(response){
+			
+			// Convert the HTTP response body into transcription text
+			return response.text();
+		})
+		.then(function(transcription){
+			
+			// Display the transcription returned by the backend
+			transcriptionOutput.textContent = transcription;
+		});	
 		
 	});
 	

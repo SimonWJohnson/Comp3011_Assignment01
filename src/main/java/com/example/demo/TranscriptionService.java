@@ -83,7 +83,8 @@ public class TranscriptionService {
 		requestBody.add("file", audioResource);
 		
 		// Send the multipart transcription request to the OpenAI API
-		String response = restClient.post()
+		//String response = restClient.post()
+		OpenAiTranscriptionResponse response = restClient.post()
 				
 				// Outgoing HTTP request destination
 				.uri(TRANSCRIPTION_API_URL)
@@ -105,9 +106,12 @@ public class TranscriptionService {
 				
 				// Temporarily receive the OpenAI JSON response as a String
 				// This will be replaced with a legitimate Java response DTO
-				.body(String.class);
+				//.body(String.class);
+				.body(OpenAiTranscriptionResponse.class);
 		
-		return null;
+		//return null;
+		// Return the transcription text extracted from the OpenAi response
+		return response.text();
 		
 	}
 }
